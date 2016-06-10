@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>IndieDish Test Vanilla</title>
+	<meta charset="utf-8">
+	<meta name="author" content="BioMaRu">
+	<meta name="description" content="IndieDish Test">
+</head>
+<body>
+	<form onsubmit="addListItem(); return false;">
+		<input type="text">
+	</form>
+	<div id="list-container">
+
+	</div>
+	<script>
+		var myList = [
+			"Ant", "<strong>Bird</strong>", "Cat"
+		]
+		var selectList = -1;
+		var _input     = document.querySelector('input')
+		var _container = document.querySelector('#list-container')
+
+		function addListItem() {
+			if( _input.value !== '' ){
+				myList.push(_input.value)
+				_input.value = null;
+				console.log(myList)
+				renderList();
+			}
+		}
+		function renderList() {
+			var _html = '', list, text, close;
+			_container.innerHTML = '';
+			myList.forEach(function(item,index,array){
+
+				wrapper = document.createElement("DIV");
+				wrapper.className = (index === selectList)? 'list active': 'list';
+
+				close = document.createTextNode("X");
+				_close = document.createElement("DIV");
+				_close.className = 'close';
+				_close.appendChild(close);
+				_close.onclick = function(removeItem) {
+					removeItem.stopPropagation();
+					var _item = removeItem.toElement.parentNode.children[0].innerHTML.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&')
+					myList.forEach(function(item,index,array){
+						if( item === _item ) {
+							myList.splice(index,1);
+							if( selectList > index ){
+								selectList--;
+							}
+							else if( selectList == index || myList.length == 0){
+								selectList = -1;
+							}
+						}
+					})
+					console.log(myList)
+					renderList();
+				};
+
+				list = document.createTextNode(item);
+				_list = document.createElement("DIV");
+				_list.appendChild(list);
+				_list.className = 'item'
+
+				wrapper = document.createElement("DIV");
+				wrapper.className = (index === selectList)? 'list active': 'list';
+				wrapper.appendChild(_list)
+				wrapper.appendChild(_close)
+				wrapper.onclick = function() {
+					selectList = index;
+					renderList();
+					alert(item)
+				};
+				_container.appendChild(wrapper)
+
+			})
+		}
+		
+		renderList();	
+	</script>
+	<style>
+		form {
+			margin-bottom: 15px;
+		}
+		.list {
+			margin-bottom: 5px;
+			padding: 15px 10px;
+			background-color: #d1d1d1;
+		}
+		.list:hover {
+			background-color: orange;
+		}
+		.list.active {
+			background-color: red;
+		}
+		.item {
+			display: inline-block;
+		}
+		.close {
+			float: right;
+			display: inline-block;
+			cursor: pointer;
+		}
+	</style>
+</body>
+</html>
